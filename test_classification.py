@@ -96,6 +96,6 @@ if __name__ == "__main__":
     # MNISTTestCompress(1) # 2 runs - 0.84 average accuracy
     # MNISTTestCompress(8, enc_zero=False) # 2 runs - 0.85 average accuracy
     # MNISTTestCompress(1, enc_zero=False) # 2 runs - 0.78 average accuracy
-    # MNISTTensortFlowTest(bound=30, train=10000, test=2000, enc_zero=False) # 2 runs - 0.70 average accuracy
+    MNISTTensortFlowTest(bound=30, train=10000, test=2000, enc_zero=False) # 3 runs - 0.70 average accuracy
     # MNISTTensortFlowTest(bound=128, train=10000, test=2000, enc_zero=False) # 1 run - 0.65 accuracy
-    MNISTTensortFlowTest(bound=85, train=60000, test=10000, enc_zero=False) # 1 run - 0.77 accuracy
+    # MNISTTensortFlowTest(bound=85, train=60000, test=10000, enc_zero=False) # 1 run - 0.77 accuracy

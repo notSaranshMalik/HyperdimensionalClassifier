@@ -23,7 +23,7 @@ class Vector:
         Similar time compared to using sum and modulo
         '''
         ret = Vector(self._vector.size, no_init=True)
-        ret._vector = 1*(self.quantise() != other.quantise())
+        ret._vector = 1*(self.quantise()._vector != other.quantise()._vector)
         return ret
     __rmul__ = __mul__
 
@@ -37,7 +37,10 @@ class Vector:
     __radd__ = __add__
 
     def __eq__(self, other):
-        return (self.quantise() == other.quantise()).all()
+        return (self.quantise()._vector == other.quantise()._vector).all()
+    
+    def __str__(self):
+        return self._vector.__str__()
 
     def quantise(self):
         '''
@@ -45,7 +48,9 @@ class Vector:
         '''
         boundary = (self._vector.max() - self._vector.min())/2 \
             + self._vector.min()
-        return 1*(self._vector >= boundary)
+        ret = Vector(self._vector.size, no_init=True)
+        ret._vector = 1*(self._vector >= boundary)
+        return ret
     
     def permute(self, perm, n):
         '''

@@ -42,7 +42,7 @@ class VectorSpace:
         dist = np.zeros(size)
         vec_quant = vec.quantise()
         for i in range(size):
-            dist[i] = np.sum(vec_quant != self.v_space[i])
+            dist[i] = np.sum(vec_quant._vector != self.v_space[i]._vector)
         if self.v_labels[dist.argmin()] is not None:
             return self.v_labels[dist.argmin()]
         return self.v_space[dist.argmin()]
