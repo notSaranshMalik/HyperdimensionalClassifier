@@ -17,8 +17,8 @@ def test_language_once():
     dollar = HD_space.newVector()
     peso = HD_space.newVector()
 
-    usa_composite = COUNTRY_NAME * usa + CURRENCY_NAME * dollar
-    mexico_composite = COUNTRY_NAME * mexico + CURRENCY_NAME * peso
+    usa_composite = (COUNTRY_NAME * usa + CURRENCY_NAME * dollar).quantise()
+    mexico_composite = (COUNTRY_NAME * mexico + CURRENCY_NAME * peso).quantise()
 
     v_sum = 0
     v_sum += HD_space.get(usa_composite * dollar) == CURRENCY_NAME

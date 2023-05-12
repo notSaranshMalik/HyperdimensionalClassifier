@@ -14,9 +14,9 @@ vector = Vector(size, zero_vec=False, no_init=False)
 - `no_init` is an optional boolean value (false by default). If set to true, the vector created does not start with a backend array.
 
 ### Vector usage
-- `v3 = v1 + v2`: Vector addition works through bundling, with component-wise numeric addition.
-- `v4 = v1 * v2`: Vector multiplication works through binary XOR. If the vectors are not binary, they get quantised first.
-- `v1 == v2`: Vector equality is overloaded with the conjunction of all component-wise comparisons. If the vectors are not binary, they get quantised first.
+- `v3 = v1 + v2`: Vector addition works through bundling, with component-wise numeric addition. For speed reasons, all functions in this library assume quantised vectors, so always quantise after adding to prevent errors!
+- `v4 = v1 * v2`: Vector multiplication works through binary XOR.
+- `v1 == v2`: Vector equality is overloaded with the conjunction of all component-wise comparisons.
 
 ### Vector functions
 - `v_quant = vector.quantise()`: Vector quantisation to convert a bundled non-binary vector into a binary format. The midpoint of the minimum and maximum value is found, which is used as a division point. Note: the exact division point is added to the positive classification (i.e. quantised as a 1). The quantisation of a 2-vector sum has an expected n/4 bits at 1 if this isn't done, which causes an XOR multiplication to be too close to an original point.
@@ -98,3 +98,7 @@ y_pred = cl.classify(X_test)
 
 print(f"{round(np.sum(y_test == y_pred) / y_test.size, 2)} accuracy") # Typically 75% or more accuracy!
 ```
+
+## Accuracy on classification datasets
+1) 85% accuracy on 8x8 sklearn dataset (boundary 8, positive only encoded)
+2) 76% accuracy on 28x28 TensorFlow dataset (boundary 85, positive only encoded)

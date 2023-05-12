@@ -50,7 +50,7 @@ class Classifier:
 
         # Insert these class vectors into the vector space
         for cl, vec in classes.items():
-            self.vec_space.insertVector(vec, label=cl)
+            self.vec_space.insertVector(vec.quantise(), label=cl)
 
         # Save the features and values dicts to the instance class to use
         # during classification
@@ -71,6 +71,6 @@ class Classifier:
                 if X[i][j] == 0 and not self.enc_zero:
                     continue
                 sum += self.features[j] * self.values[X[i][j]]
-            y_hat[i] = self.vec_space.get(sum)
+            y_hat[i] = self.vec_space.get(sum.quantise())
         
         return y_hat

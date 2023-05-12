@@ -23,7 +23,7 @@ class Vector:
         Similar time compared to using sum and modulo
         '''
         ret = Vector(self._vector.size, no_init=True)
-        ret._vector = 1*(self.quantise()._vector != other.quantise()._vector)
+        ret._vector = 1*(self._vector != other._vector)
         return ret
     __rmul__ = __mul__
 
@@ -37,9 +37,15 @@ class Vector:
     __radd__ = __add__
 
     def __eq__(self, other):
-        return (self.quantise()._vector == other.quantise()._vector).all()
+        '''
+        Checks equality through component-wise comparisons
+        '''
+        return (self._vector == other._vector).all()
     
     def __str__(self):
+        '''
+        Returns a string representation of the underlying vector
+        '''
         return self._vector.__str__()
 
     def quantise(self):

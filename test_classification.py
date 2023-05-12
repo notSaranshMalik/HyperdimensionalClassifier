@@ -29,9 +29,7 @@ def MNISTTest():
 
 '''
 TEST 2: MNIST compressed classification test
-Using a compressed form of the MNIST set where the values 0-16 are 
-compressed to 0 and 1 - checking if the randomness of the hypervectors
-gets mitigated through this
+Using the 8x8 SKlearn set - compressed onto the range 0-1
 '''
 def MNISTTestCompress(boundary, enc_zero=True):
 
@@ -58,20 +56,20 @@ def MNISTTestCompress(boundary, enc_zero=True):
 
 
 '''
-TEST 3: MNIST detailed classification test
-Using the 28x28 TensorFlow set
+TEST 3: MNIST Tensor Flow classification test
+Using the 28x28 TensorFlow set, compressed onto the range 0-1
 '''
-def MNISTTensortFlowTest(bound, train, test, enc_zero=True):
+def MNISTTensorFlowTest(boundary, enc_zero=True):
 
     from tensorflow import keras
 
     (X_train, y_train),(X_test, y_test) = \
         keras.datasets.mnist.load_data()
     
-    X_train = 1*(X_train >= bound).reshape((X_train.shape[0], -1))[:train]
-    y_train = y_train[:train]
-    X_test = 1*(X_test >= bound).reshape((X_test.shape[0], -1))[:test]
-    y_test = y_test[:test]
+    X_train = 1*(X_train >= boundary).reshape((X_train.shape[0], -1))
+    y_train = y_train
+    X_test = 1*(X_test >= boundary).reshape((X_test.shape[0], -1))
+    y_test = y_test
     
     print("\n\nBEGIN TRAINING")
     MNIST_classifier = Classifier()
@@ -91,11 +89,9 @@ def MNISTTensortFlowTest(bound, train, test, enc_zero=True):
 Running tests
 '''
 if __name__ == "__main__":
-    # MNISTTest() # 4 runs - 0.76 average accuracy
-    # MNISTTestCompress(8) # 2 runs - 0.81 accuracy
-    # MNISTTestCompress(1) # 2 runs - 0.84 average accuracy
+    # MNISTTest() # 8 runs - 0.76 average accuracy
+    # MNISTTestCompress(8) # 4 runs - 0.84 accuracy
     # MNISTTestCompress(8, enc_zero=False) # 2 runs - 0.85 average accuracy
+    # MNISTTestCompress(1) # 2 runs - 0.84 average accuracy
     # MNISTTestCompress(1, enc_zero=False) # 2 runs - 0.78 average accuracy
-    MNISTTensortFlowTest(bound=30, train=10000, test=2000, enc_zero=False) # 3 runs - 0.70 average accuracy
-    # MNISTTensortFlowTest(bound=128, train=10000, test=2000, enc_zero=False) # 1 run - 0.65 accuracy
-    # MNISTTensortFlowTest(bound=85, train=60000, test=10000, enc_zero=False) # 1 run - 0.77 accuracy
+    # MNISTTensorFlowTest(85, enc_zero=False) # 2 runs - 0.76 accuracy
