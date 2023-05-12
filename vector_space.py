@@ -30,7 +30,7 @@ class VectorSpace:
         Adds a vector to the current vector space
         If the vector has a label, it is given that title
         '''
-        self.v_space.append(vec)
+        self.v_space.append(vec.quantise())
         self.v_labels.append(label)
     
     def get(self, vec):
@@ -42,7 +42,7 @@ class VectorSpace:
         dist = np.zeros(size)
         vec_quant = vec.quantise()
         for i in range(size):
-            dist[i] = np.sum(vec_quant != self.v_space[i].quantise())
+            dist[i] = np.sum(vec_quant != self.v_space[i])
         if self.v_labels[dist.argmin()] is not None:
             return self.v_labels[dist.argmin()]
         return self.v_space[dist.argmin()]

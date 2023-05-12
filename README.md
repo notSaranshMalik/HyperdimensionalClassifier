@@ -7,10 +7,11 @@ A basic hyperdimensional vector classification algorithm made from scratch in Py
 
 ### Vector creation
 ```
-vector = Vector(size, zero_vec=False)
+vector = Vector(size, zero_vec=False, no_init=False)
 ```
 - `size` is an integer value, determining the dimensionality of the individual vector.
 - `zero_vec` is an optional boolean value (false by default). If set to true, the vector created is not random, rather a zero-vector.
+- `no_init` is an optional boolean value (false by default). If set to true, the vector created does not start with a backend array.
 
 ### Vector usage
 - `v3 = v1 + v2`: Vector addition works through bundling, with component-wise numeric addition.
@@ -45,10 +46,11 @@ If it's required to be in the space, either create a vector `v = Vector(size)`, 
 ### Classifier creation and training
 ```
 cl = Classifier()
-cl.train(X, y)
+cl.train(X, y, enc_zero=True)
 ```
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
+- `enc_zero` is an optional boolean value (true by defauly). If set to false, the zero points of data on the input aren't encoded at all, which is useful for inputs with only boolean value features.
 
 ### Classification testing
 ```

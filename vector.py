@@ -4,11 +4,14 @@ class Vector:
 
     _vector = None
 
-    def __init__(self, v_size, zero_vec = False):
+    def __init__(self, v_size, zero_vec = False, no_init = False):
         '''
         Creates a random hyperdimensional vector of size v_size
         If zero_vec, then the vector isn't randomised
+        If no_init, then the vector isn't initialised
         '''
+        if no_init:
+            return
         if not zero_vec:
             self._vector = np.random.randint(2, size=v_size)
         else:
@@ -19,7 +22,7 @@ class Vector:
         Does vector multiplication through bitwise XOR
         Similar time compared to using sum and modulo
         '''
-        ret = Vector(self._vector.size)
+        ret = Vector(self._vector.size, no_init=True)
         ret._vector = 1*(self.quantise() != other.quantise())
         return ret
     __rmul__ = __mul__
@@ -28,7 +31,7 @@ class Vector:
         '''
         Does vector addition through bundling
         '''
-        ret = Vector(self._vector.size)
+        ret = Vector(self._vector.size, no_init=True)
         ret._vector = self._vector + other._vector
         return ret
     __radd__ = __add__
@@ -51,7 +54,7 @@ class Vector:
         p = np.copy(self._vector)
         for _ in range(n):
             p = p[perm]
-        ret = Vector(self._vector.size)
+        ret = Vector(self._vector.size, no_init=True)
         ret._vector = p
         return ret
 
@@ -65,6 +68,6 @@ class Vector:
             for i in range(self._vector.size):
                 p[perm[i]] = cur[i]
             cur = np.copy(p)
-        ret = Vector(self._vector.size)
+        ret = Vector(self._vector.size, no_init=True)
         ret._vector = p
         return ret
