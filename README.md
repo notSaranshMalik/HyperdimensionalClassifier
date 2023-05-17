@@ -50,13 +50,26 @@ cl.train(X, y, enc_zero=True)
 ```
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
-- `enc_zero` is an optional boolean value (true by defauly). If set to false, the zero points of data on the input aren't encoded at all, which is useful for inputs with only boolean value features.
+- `enc_zero` is an optional boolean value (true by default). If set to false, the zero points of data on the input aren't encoded at all, which is useful for inputs with only boolean value features.
 
 ### Classification testing
 ```
-y_pred = cl.classify(X_test)
+y_pred = cl.classify(X_test, t_pos=0)
 ```
 - `X_test` is a r by n Numpy matrix, where there are r datapoints and n features per point.
+- `t_pos` is an optional integer value (0 by default). When set to a number, the progress from this classification gets sent to that progress bar
+
+## Using the concurrent classification algorithm
+
+### Explanation
+
+This program supports concurrently training and testing data on multiple CPU cores at once. Training and testing on MultiprocessClassifier works exactly the same as the regular Classifier class. Initialisation simply has an extra optional parameter
+
+### Classifier creation and training
+```
+cl = MultiprocessClassifier(P=None)
+```
+- `P` is an optional integer value (os.cpu_count() - 1 by default) that determines how many cores the program will be run on at once. 
 
 ## Example usage of vector space
 

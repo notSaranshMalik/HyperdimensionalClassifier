@@ -7,7 +7,10 @@ SIZE = 10000
 
 class Classifier:
 
+    # Globals for nearest neighbours
     vec_space = None
+
+    # Globals for encoding data
     features = None
     values = None
     enc_zero = None
@@ -26,6 +29,7 @@ class Classifier:
         '''
 
         # Create HD vectors for every feature and value
+        print("\n\nBEGIN TRAINING")
         features = dict()
         for i in range(X.shape[1]):
             features[i] = Vector(SIZE)
@@ -39,14 +43,7 @@ class Classifier:
         for i in np.unique(y):
             classes[i] = Vector(SIZE, zero_vec=True)
 
-        # Create a binding for every training point
-        for i in tqdm(range(X.shape[0])):
-            sum = Vector(SIZE, zero_vec=True)
-            for j in range(X.shape[1]):
-                if X[i][j] == 0 and not enc_zero:
-                    continue
-                sum += features[j] * values[X[i][j]]
-            classes[y[i]] += sum
+        classes = self._encode(X, y, features, values, classes, enc_zero)
 
         # Insert these class vectors into the vector space
         for cl, vec in classes.items():
@@ -58,14 +55,33 @@ class Classifier:
         self.values = values
         self.enc_zero = enc_zero
 
-    def classify(self, X):
+    def _encode(self, X, y, features, values, classes, enc_zero=True, t_pos=0):
+        '''
+        PRIVATE METHOD: DO NOT USE WITHOUT KNOWLEDGE
+        Given X data, y data, the encoding data (features, values, enc_zero)
+        and the classes to add into, this function encodes and returns all
+        classifications
+        '''
+        for i in tqdm(range(X.shape[0]), position=t_pos, leave=None):
+            sum = Vector(SIZE, zero_vec=True)
+            for j in range(X.shape[1]):
+                if X[i][j] == 0 and not enc_zero:
+                    continue
+                sum += features[j] * values[X[i][j]]
+            classes[y[i]] += sum
+        return classes
+
+    def classify(self, X, t_pos=0):
         '''
         Classify a set of points X (mxn matrix)
+        t_pos is an optional parameter for the line height of the progress bar
+        in case multiple run at once
         '''
 
         # Classification begins
+        print("\n\nBEGIN TESTING")
         y_hat = np.zeros(X.shape[0])
-        for i in tqdm(range(X.shape[0])):
+        for i in tqdm(range(X.shape[0]), position=t_pos, leave=None):
             sum = Vector(SIZE, zero_vec=True)
             for j in range(X.shape[1]):
                 if X[i][j] == 0 and not self.enc_zero:
