@@ -1,16 +1,17 @@
 import numpy as np
 from classification import Classifier
-import pickle
 from tqdm import tqdm
+
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from tensorflow import keras
+import h5py
+import pickle
 '''
 TEST 1: MNIST classification test
 Using the 8x8 SKlearn set
 '''
 def MNISTTest():
-
-    from sklearn.datasets import load_digits
-    from sklearn.model_selection import train_test_split
-
 
     X, y = load_digits(return_X_y=True)
     X_train, X_test, y_train, y_test = train_test_split(
@@ -34,9 +35,6 @@ TEST 2: MNIST compressed classification test
 Using the 8x8 SKlearn set - compressed onto the range 0-1
 '''
 def MNISTTestCompress(boundary, enc_zero=True):
-
-    from sklearn.datasets import load_digits
-    from sklearn.model_selection import train_test_split
 
     X, y = load_digits(return_X_y=True)
     X = 1 * (X >= boundary)
@@ -62,8 +60,6 @@ TEST 3: MNIST Tensor Flow classification test
 Using the 28x28 TensorFlow set, compressed onto the range 0-1
 '''
 def MNISTTensorFlowTest(boundary, enc_zero=True):
-
-    from tensorflow import keras
 
     (X_train, y_train),(X_test, y_test) = \
         keras.datasets.mnist.load_data()
@@ -93,8 +89,6 @@ Since the model takes a while to train, pickling is used for consistency
 Note: Download the PCAM data from https://github.com/basveeling/pcam
 '''
 def PCamProcessing():
-    
-    import h5py
 
     print("\n\nLOADING DATA")
     x_train = h5py.File('camelyonpatch_level_2_split_train_x.h5', 'r')['x'][:1000]
@@ -173,7 +167,7 @@ if __name__ == "__main__":
     # MNISTTestCompress(8, enc_zero=False) # 2 runs - 0.85 average accuracy
     # MNISTTestCompress(1) # 2 runs - 0.84 average accuracy
     # MNISTTestCompress(1, enc_zero=False) # 2 runs - 0.78 average accuracy
-    # MNISTTensorFlowTest(85, enc_zero=False) # 2 runs - 0.76 accuracy
+    MNISTTensorFlowTest(85, enc_zero=False) # 2 runs - 0.76 accuracy
     
-    PCamProcessing()
-    PCamTest(600, enc_zero=False)
+    # PCamProcessing()
+    # PCamTest(600, enc_zero=False)
