@@ -2,7 +2,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from classification import Classifier
-from vector import Vector
+from vector_groups import VectorGroups
 import numpy as np
 from pathos.multiprocessing import ProcessPool as Pool
 from copy import deepcopy
@@ -31,18 +31,16 @@ class MultiprocessClassifier:
         '''
 
         # Create HD vectors for every feature and value
-        features = dict()
-        for i in range(X.shape[1]):
-            features[i] = Vector(SIZE)
+        vecs = VectorGroups.random_vectors(X.shape[1])
+        features = dict(zip(range(X.shape[1]), vecs))
 
-        values = dict()
-        for i in np.unique(X):
-            values[i] = Vector(SIZE)
+        vecs = VectorGroups.level_vectors(X.max()-X.min()+1)
+        values = dict(zip(range(X.min(), X.max()+1), vecs))
 
         # Create an empty HD point for every class
-        classes = dict()
-        for i in np.unique(y):
-            classes[i] = Vector(SIZE, zero_vec=True)
+        unique_y = np.unique(y)
+        vecs = VectorGroups.zero_vectors(len(unique_y))
+        classes = dict(zip(unique_y, vecs))
         
         # Create task for sub-classifiers
         def task(X_sub, y_sub, t_pos):

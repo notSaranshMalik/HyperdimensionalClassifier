@@ -1,6 +1,7 @@
 import numpy as np
 from vector_space import VectorSpace
 from vector import Vector
+from vector_groups import VectorGroups
 from tqdm import tqdm
 
 SIZE = 10000
@@ -31,18 +32,17 @@ class Classifier:
         # Create HD vectors for every feature and value
         if not no_print:
             print("\n\nBEGIN TRAINING")
-        features = dict()
-        for i in range(X.shape[1]):
-            features[i] = Vector(SIZE)
 
-        values = dict()
-        for i in np.unique(X):
-            values[i] = Vector(SIZE)
+        vecs = VectorGroups.random_vectors(X.shape[1])
+        features = dict(zip(range(X.shape[1]), vecs))
+
+        vecs = VectorGroups.level_vectors(max(X)-min(X)+1)
+        values = dict(zip(range(min(X), max(X)+1), vecs))
 
         # Create an empty HD point for every class
-        classes = dict()
-        for i in np.unique(y):
-            classes[i] = Vector(SIZE, zero_vec=True)
+        unique_y = np.unique(y)
+        vecs = VectorGroups.zero_vectors(len(unique_y))
+        classes = dict(zip(unique_y, vecs))
 
         classes = self._encode(X, y, features, values, classes, enc_zero)
 

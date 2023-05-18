@@ -8,7 +8,7 @@ class VectorGroups:
     @staticmethod
     def blank_vectors(n):
         '''
-        Produces a set of uninitialised vectors for every key
+        Produces a set of uninitialised vectors of size n
         '''
         lst = []
         for _ in range(n):
@@ -18,7 +18,7 @@ class VectorGroups:
     @staticmethod
     def zero_vectors(n):
         '''
-        Produces a set of zero vectors for every key
+        Produces a set of zero vectors of size n
         '''
         lst = []
         for _ in range(n):
@@ -28,7 +28,7 @@ class VectorGroups:
     @staticmethod
     def random_vectors(n):
         '''
-        Produces a set of random vectors for every key
+        Produces a set of random vectors of size n
         '''
         lst = []
         for _ in range(n):
@@ -38,7 +38,7 @@ class VectorGroups:
     @staticmethod
     def level_vectors(n):
         '''
-        Produces a set of level vectors for every key
+        Produces a set of level vectors of size n
         '''
 
         prev = np.random.randint(2, size=SIZE)

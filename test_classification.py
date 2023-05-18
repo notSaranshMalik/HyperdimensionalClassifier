@@ -4,15 +4,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 from classification import Classifier
 from multi_classification import MultiprocessClassifier
+from sklearn.model_selection import train_test_split
+from feature_picker import FeaturePicker
 
 from tensorflow import keras
 import h5py
 
 '''
 TEST 1: MNIST Tensor Flow classification test
-Using the 28x28 TensorFlow set, compressed onto the range 0-1
+Using the 28x28 TensorFlow set
 '''
-def MNISTTensorFlowTest(boundary, enc_zero=True):
+def MNISTTensorFlowTest():
 
     (X_train, y_train),(X_test, y_test) = \
         keras.datasets.mnist.load_data()
@@ -22,14 +24,18 @@ def MNISTTensorFlowTest(boundary, enc_zero=True):
     X_test = X_test.reshape((X_test.shape[0], -1))
     y_test = y_test
 
-    X_train = 1*(X_train >= boundary)
-    X_test = 1*(X_test >= boundary)
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train, y_train, test_size=0.1)
+    
+    feats = FeaturePicker.pick_features(X_val, y_val)
+    X_train = X_train[:, feats]
+    X_test = X_test[:, feats]
     
     if MULTI == 1:
         MNIST_classifier = Classifier()
     else:
         MNIST_classifier = MultiprocessClassifier(MULTI)
-    MNIST_classifier.train(X_train, y_train, enc_zero=enc_zero)
+    MNIST_classifier.train(X_train, y_train)
 
     y_hat = MNIST_classifier.classify(X_test)
 
@@ -80,5 +86,15 @@ Running tests
 MULTI = 8 # Choose 1 for single classification, or higher for multiprocessing
 if __name__ == "__main__":
 
-    MNISTTensorFlowTest(85, enc_zero=False) # 7 runs - 0.75 accuracy
+    '''
+    7 runs (85 boundary, no zero enc) - 0.75 accuracy
+    1 run (leveled) - 0.63 accuracy
+    1 run (leveled, no zero enc) - 0.68 accuracy
+    1 run (leveled, feature selected) - 0.62 accuracy
+    '''
+    MNISTTensorFlowTest()
+
+    '''
+    1 run (150 boundary, 0/1 random) - 0.65 accuracy
+    '''
     # PCamProcessing(boundary = 150)
