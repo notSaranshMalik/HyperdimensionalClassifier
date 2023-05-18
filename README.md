@@ -20,16 +20,26 @@ vector = Vector(size, zero_vec=False, no_init=False)
 
 ### Vector functions
 - `v_quant = vector.quantise()`: Vector quantisation to convert a bundled non-binary vector into a binary format. The midpoint of the minimum and maximum value is found, which is used as a division point. Note: the exact division point is added to the positive classification (i.e. quantised as a 1). The quantisation of a 2-vector sum has an expected n/4 bits at 1 if this isn't done, which causes an XOR multiplication to be too close to an original point.
+- `sim = vector.hammingDistance(vector2)`: Finds the Hamming Distance between the two vectors. Useful for binary vectors.
+- `sim = vector.cosineSimilarity(vector2)`: Finds the Cosine Similarity between the two vectors. Useful for integer vectors.
 - `v_perm = vector.permute(perm, n)`: Vector perumtation using the perm variable. A given permutation can be generated with `np.random.permutation(size)` with `size` being the vector dimension. The permutation occurs iteratively, n times.
 - `v_rev_perm = vector.permuteReverse(perm, n)`: Reverses the permutation n times.
+
+### Vector groups
+Creating multiple vectors is possible with the VectorGroups class.
+- `VectorGroups.blankVectors(n)` returns a list of n blank uninitialised vectors
+- `VectorGroups.zeroVectors(n)` returns a list of n zero vectors
+- `VectorGroups.randomVectors(n)` returns a list of n random vectors
+- `VectorGroups.levelVectors(n)` returns a list of n leveled vectors
 
 ## Using a hyperdimensional vector space
 
 ### Vector space creation
 ```
-space = VectorSpace(size)
+space = VectorSpace(size, type="BIN")
 ```
 - `size` is an integer value, determining the dimensionality of the individual vectors in this space.
+- `type` is a string value, determining if the vector space is a "BIN" binary vector space (all vectors inserted should be quantised, and probing uses Hamming Distance) or an "INT" integer vector space (probing uses Cosine Similarity)
 
 ### Vector space functions
 - `vector = space.newVector(label=None)`: Creates a new vector, then adds it to the vector space. If a label is given, it is attached to the vector. Acts as a shortcut method (see class notes below).
@@ -72,6 +82,20 @@ This program supports concurrently training and testing data on multiple CPU cor
 cl = MultiprocessClassifier(P=None)
 ```
 - `P` is an optional integer value (os.cpu_count() - 1 by default) that determines how many cores the program will be run on at once. 
+
+## Feature picking
+
+### Explanation
+
+The FeaturePicker class analyses the features which aren't useful in distinguishing between classes, and returns a list of features that should be used (as a boolean array)
+
+### Usage of the class
+```
+feats = FeaturePicker.pickFeatures(X, y)
+X_train = X_train[:, feats]
+```
+- `X` is the input X data. Use validation data to prevent overfitting
+- `y` is the input y data. Use validation data to prevent overfitting
 
 ## Example usage of vector space
 

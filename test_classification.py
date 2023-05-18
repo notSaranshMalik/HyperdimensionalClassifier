@@ -5,8 +5,9 @@ import numpy as np
 from classification import Classifier
 from multi_classification import MultiprocessClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from feature_picker import FeaturePicker
-
+import matplotlib.pyplot as plt
 from tensorflow import keras
 import h5py
 
@@ -27,7 +28,7 @@ def MNISTTensorFlowTest():
     X_train, X_val, y_train, y_val = train_test_split(
         X_train, y_train, test_size=0.1)
     
-    feats = FeaturePicker.pick_features(X_val, y_val)
+    feats = FeaturePicker.pickFeatures(X_val, y_val)
     X_train = X_train[:, feats]
     X_test = X_test[:, feats]
     
@@ -44,6 +45,11 @@ def MNISTTensorFlowTest():
     print(f"{X_test.shape[0]} testing points")
     print(f"{round(np.sum(y_hat == y_test) / y_hat.size, 2)} accuracy")
     print("\n\n")
+    
+    cm = confusion_matrix(y_test, y_hat)
+    disp = ConfusionMatrixDisplay(confusion_matrix = cm)
+    disp.plot()
+    plt.show()
 
 '''
 TEST 2: PCam data
@@ -87,10 +93,10 @@ MULTI = 8 # Choose 1 for single classification, or higher for multiprocessing
 if __name__ == "__main__":
 
     '''
-    7 runs (85 boundary, no zero enc) - 0.75 accuracy
+    7 runs (85 quantised, no zero enc) - 0.75 accuracy
     1 run (leveled) - 0.63 accuracy
     1 run (leveled, no zero enc) - 0.68 accuracy
-    1 run (leveled, feature selected) - 0.62 accuracy
+    3 runs (leveled, feature selected) - 0.62 accuracy
     '''
     MNISTTensorFlowTest()
 

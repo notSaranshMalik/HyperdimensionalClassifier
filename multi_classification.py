@@ -31,15 +31,15 @@ class MultiprocessClassifier:
         '''
 
         # Create HD vectors for every feature and value
-        vecs = VectorGroups.random_vectors(X.shape[1])
+        vecs = VectorGroups.randomVectors(X.shape[1])
         features = dict(zip(range(X.shape[1]), vecs))
 
-        vecs = VectorGroups.level_vectors(X.max()-X.min()+1)
+        vecs = VectorGroups.levelVectors(X.max()-X.min()+1)
         values = dict(zip(range(X.min(), X.max()+1), vecs))
 
         # Create an empty HD point for every class
         unique_y = np.unique(y)
-        vecs = VectorGroups.zero_vectors(len(unique_y))
+        vecs = VectorGroups.zeroVectors(len(unique_y))
         classes = dict(zip(unique_y, vecs))
         
         # Create task for sub-classifiers

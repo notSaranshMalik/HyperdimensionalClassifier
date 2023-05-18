@@ -16,8 +16,8 @@ def similarity_matrix(d):
     plt.show()
 
 # Testing random and level vectors
-random = HD_group.random_vectors(10)
+random = HD_group.randomVectors(256)
 similarity_matrix(random)
 
-level = HD_group.level_vectors(10)
+level = HD_group.levelVectors(256)
 similarity_matrix(level)

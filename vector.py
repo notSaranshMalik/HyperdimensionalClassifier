@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import norm
 
 class Vector:
 
@@ -57,6 +58,20 @@ class Vector:
         ret = Vector(self._vector.size, no_init=True)
         ret._vector = 1*(self._vector >= boundary)
         return ret
+    
+    def hammingDistance(self, other):
+        '''
+        Calculates the Hamming Distance between two vectors
+        '''
+        return np.sum(other._vector != self._vector)
+
+    def cosineSimilarity(self, other):
+        '''
+        Calculates the Cosine Similarity between two vectors
+        '''
+        a = self._vector
+        b = other._vector
+        return (a @ b) / (norm(a) * norm(b))
     
     def permute(self, perm, n):
         '''

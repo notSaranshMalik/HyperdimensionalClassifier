@@ -7,13 +7,19 @@ class VectorSpace:
     v_labels = None
     v_size = None
 
-    def __init__(self, v_size):
+    type = None
+
+    def __init__(self, v_size, type="BIN"):
         '''
         Creates a hyperdimensional vector space of size v_size
+        A "BIN" (binary) type vector space works by quantising and using 
+        Hamming Distance
+        An "INT" (integer) type vector space works by using Cosine Similarity
         '''
         self.v_space = []
         self.v_labels = []
         self.v_size = v_size
+        self.type = type
 
     def newVector(self, label=None):
         '''
@@ -41,7 +47,10 @@ class VectorSpace:
         size = len(self.v_space)
         dist = np.zeros(size)
         for i in range(size):
-            dist[i] = np.sum(vec._vector != self.v_space[i]._vector)
+            if self.type == "BIN":
+                dist[i] = vec.hammingDistance(self.v_space[i])
+            elif self.type == "INT":
+                dist[i] = -vec.cosineSimilarity(self.v_space[i])
         if self.v_labels[dist.argmin()] is not None:
             return self.v_labels[dist.argmin()]
         return self.v_space[dist.argmin()]

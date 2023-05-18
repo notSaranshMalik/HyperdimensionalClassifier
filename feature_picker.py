@@ -3,7 +3,7 @@ import numpy as np
 class FeaturePicker:
 
     @staticmethod
-    def calculate_matrix(X, y):
+    def calculateMatrix(X, y):
 
         X = (X - X.min()) / (X.max()-X.min())
 
@@ -23,9 +23,9 @@ class FeaturePicker:
         return classes
     
     @staticmethod
-    def pick_features(X, y):
+    def pickFeatures(X, y):
 
-        sim = FeaturePicker.calculate_matrix(X, y)
+        sim = FeaturePicker.calculateMatrix(X, y)
 
         importance = np.empty(X.shape[1])
         for feature in range(X.shape[1]):

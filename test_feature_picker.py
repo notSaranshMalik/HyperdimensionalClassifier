@@ -18,7 +18,7 @@ X_train, X_val, y_train, y_val = train_test_split(
 TEST 1: Matrix test
 '''
 def test_matrix():
-    classes = FeaturePicker.calculate_matrix(X_val, y_val)
+    classes = FeaturePicker.calculateMatrix(X_val, y_val)
     for val in classes.values():
         plt.matshow(val.reshape((28, 28)))
         plt.show()
@@ -27,7 +27,7 @@ def test_matrix():
 TEST 2: Importance test
 '''
 def test_importance():
-    importance = FeaturePicker.pick_features(X_val, y_val)
+    importance = FeaturePicker.pickFeatures(X_val, y_val)
     plt.matshow(importance.reshape((28, 28)))
     plt.show()
 

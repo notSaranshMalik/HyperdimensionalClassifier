@@ -33,15 +33,15 @@ class Classifier:
         if not no_print:
             print("\n\nBEGIN TRAINING")
 
-        vecs = VectorGroups.random_vectors(X.shape[1])
+        vecs = VectorGroups.randomVectors(X.shape[1])
         features = dict(zip(range(X.shape[1]), vecs))
 
-        vecs = VectorGroups.level_vectors(max(X)-min(X)+1)
+        vecs = VectorGroups.levelVectors(max(X)-min(X)+1)
         values = dict(zip(range(min(X), max(X)+1), vecs))
 
         # Create an empty HD point for every class
         unique_y = np.unique(y)
-        vecs = VectorGroups.zero_vectors(len(unique_y))
+        vecs = VectorGroups.zeroVectors(len(unique_y))
         classes = dict(zip(unique_y, vecs))
 
         classes = self._encode(X, y, features, values, classes, enc_zero)

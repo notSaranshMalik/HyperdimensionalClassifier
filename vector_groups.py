@@ -6,7 +6,7 @@ SIZE = 10000
 class VectorGroups:
 
     @staticmethod
-    def blank_vectors(n):
+    def blankVectors(n):
         '''
         Produces a set of uninitialised vectors of size n
         '''
@@ -16,7 +16,7 @@ class VectorGroups:
         return lst
 
     @staticmethod
-    def zero_vectors(n):
+    def zeroVectors(n):
         '''
         Produces a set of zero vectors of size n
         '''
@@ -26,7 +26,7 @@ class VectorGroups:
         return lst
 
     @staticmethod
-    def random_vectors(n):
+    def randomVectors(n):
         '''
         Produces a set of random vectors of size n
         '''
@@ -36,7 +36,7 @@ class VectorGroups:
         return lst
     
     @staticmethod
-    def level_vectors(n):
+    def levelVectors(n):
         '''
         Produces a set of level vectors of size n
         '''
