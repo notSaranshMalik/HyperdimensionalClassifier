@@ -21,7 +21,7 @@ class Classifier:
         '''
         self.vec_space = VectorSpace(SIZE)
 
-    def train(self, X, y, enc_zero=True):
+    def train(self, X, y, enc_zero=True, no_print=False):
         '''
         Train the model on the data X (mxn matrix) and classification 
         y (mx1 matrix). enc_zero is a metric that defines whether zero values
@@ -29,7 +29,8 @@ class Classifier:
         '''
 
         # Create HD vectors for every feature and value
-        print("\n\nBEGIN TRAINING")
+        if not no_print:
+            print("\n\nBEGIN TRAINING")
         features = dict()
         for i in range(X.shape[1]):
             features[i] = Vector(SIZE)
@@ -62,7 +63,7 @@ class Classifier:
         and the classes to add into, this function encodes and returns all
         classifications
         '''
-        for i in tqdm(range(X.shape[0]), position=t_pos, leave=None):
+        for i in tqdm(range(X.shape[0]), position=t_pos, mininterval=0.5):
             sum = Vector(SIZE, zero_vec=True)
             for j in range(X.shape[1]):
                 if X[i][j] == 0 and not enc_zero:
@@ -71,7 +72,7 @@ class Classifier:
             classes[y[i]] += sum
         return classes
 
-    def classify(self, X, t_pos=0):
+    def classify(self, X, t_pos=0, no_print=False):
         '''
         Classify a set of points X (mxn matrix)
         t_pos is an optional parameter for the line height of the progress bar
@@ -79,9 +80,10 @@ class Classifier:
         '''
 
         # Classification begins
-        print("\n\nBEGIN TESTING")
+        if not no_print:
+            print("\n\nBEGIN TESTING")
         y_hat = np.zeros(X.shape[0])
-        for i in tqdm(range(X.shape[0]), position=t_pos, leave=None):
+        for i in tqdm(range(X.shape[0]), position=t_pos, mininterval=0.5):
             sum = Vector(SIZE, zero_vec=True)
             for j in range(X.shape[1]):
                 if X[i][j] == 0 and not self.enc_zero:

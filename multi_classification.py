@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 from classification import Classifier
 from vector import Vector
 import numpy as np
@@ -83,7 +86,7 @@ class MultiprocessClassifier:
             cl.values = v
             cl.vec_space = s
             cl.classes = self.main_classifier.enc_zero
-            return cl.classify(X_sub, t_pos)
+            return cl.classify(X_sub, t_pos, no_print=True)
         
         # Start processes
         print(f"\n\nBEGIN TESTING ON {self.P} PROCESSES")

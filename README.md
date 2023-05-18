@@ -46,18 +46,20 @@ If it's required to be in the space, either create a vector `v = Vector(size)`, 
 ### Classifier creation and training
 ```
 cl = Classifier()
-cl.train(X, y, enc_zero=True)
+cl.train(X, y, enc_zero=True, no_print=False)
 ```
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
 - `enc_zero` is an optional boolean value (true by default). If set to false, the zero points of data on the input aren't encoded at all, which is useful for inputs with only boolean value features.
+- `no_print` is an optional boolean value (false by defauly). If set to true, no logging commands will be printed.
 
 ### Classification testing
 ```
-y_pred = cl.classify(X_test, t_pos=0)
+y_pred = cl.classify(X_test, t_pos=0, no_print=False)
 ```
 - `X_test` is a r by n Numpy matrix, where there are r datapoints and n features per point.
 - `t_pos` is an optional integer value (0 by default). When set to a number, the progress from this classification gets sent to that progress bar
+- `no_print` is an optional boolean value (false by defauly). If set to true, no logging commands will be printed.
 
 ## Using the concurrent classification algorithm
 
