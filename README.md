@@ -14,8 +14,10 @@ vector = Vector(size, zero_vec=False, no_init=False)
 - `no_init` is an optional boolean value (false by default). If set to true, the vector created does not start with a backend array.
 
 ### Vector usage
-- `v3 = v1 + v2`: Vector addition works through bundling, with component-wise numeric addition. For speed reasons, all functions in this library assume quantised vectors, so always quantise after adding to prevent errors!
-- `v4 = v1 * v2`: Vector multiplication works through binary XOR.
+- `v3 = v1 + v2`: Vector-vector addition works through bundling, with component-wise numeric addition.
+- `v3 = v1 - v2`: Vector-vector subtraction works through bundling, with component-wise numeric subtraction.
+- `v4 = v1 * v2`: Vector-vector multiplication works through binary XOR.
+- `v2 = 3 * v1`: Scalar-vector multiplication works through component-wise multiplication. Note: right-multiplication of a scalar isn't valid due to speed optimisations.
 - `v1 == v2`: Vector equality is overloaded with the conjunction of all component-wise comparisons.
 
 ### Vector functions
@@ -26,11 +28,10 @@ vector = Vector(size, zero_vec=False, no_init=False)
 - `v_rev_perm = vector.permuteReverse(perm, n)`: Reverses the permutation n times.
 
 ### Vector groups
-Creating multiple vectors is possible with the VectorGroups class.
-- `VectorGroups.blankVectors(n)` returns a list of n blank uninitialised vectors
-- `VectorGroups.zeroVectors(n)` returns a list of n zero vectors
-- `VectorGroups.randomVectors(n)` returns a list of n random vectors
-- `VectorGroups.levelVectors(n)` returns a list of n leveled vectors
+- `VectorGroups.blankVectors(n)` returns a list of n blank uninitialised vectors.
+- `VectorGroups.zeroVectors(n)` returns a list of n zero vectors.
+- `VectorGroups.randomVectors(n)` returns a list of n random vectors.
+- `VectorGroups.levelVectors(n)` returns a list of n leveled vectors.
 
 ## Using a hyperdimensional vector space
 
@@ -39,7 +40,7 @@ Creating multiple vectors is possible with the VectorGroups class.
 space = VectorSpace(size, type="BIN")
 ```
 - `size` is an integer value, determining the dimensionality of the individual vectors in this space.
-- `type` is a string value, determining if the vector space is a "BIN" binary vector space (all vectors inserted should be quantised, and probing uses Hamming Distance) or an "INT" integer vector space (probing uses Cosine Similarity)
+- `type` is a string value, determining if the vector space is a "BIN" binary vector space (all vectors inserted should be quantised, and probing uses Hamming Distance) or an "INT" integer vector space (probing uses Cosine Similarity).
 
 ### Vector space functions
 - `vector = space.newVector(label=None)`: Creates a new vector, then adds it to the vector space. If a label is given, it is attached to the vector. Acts as a shortcut method (see class notes below).
@@ -53,91 +54,35 @@ If it's required to be in the space, either create a vector `v = Vector(size)`, 
 
 ## Using the classification algorithm
 
-### Classifier creation and training
+### Classifier creation
 ```
-cl = Classifier()
-cl.train(X, y, enc_zero=True, no_print=False)
+cl = Classifier(P=None, type="BIN")
+```
+- `P` is an optional integer value (os.cpu_count() - 1 by default) that determines how many cores the program will be run on at once. 
+- `type` is an optional string value ("BIN" by default) that determines if the underlying vector space is binary (BIN) or integer (INT) based.
+
+### Classification training and testing
+```
+cl.train(X, y)
 ```
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
-- `enc_zero` is an optional boolean value (true by default). If set to false, the zero points of data on the input aren't encoded at all, which is useful for inputs with only boolean value features.
-- `no_print` is an optional boolean value (false by defauly). If set to true, no logging commands will be printed.
 
-### Classification testing
 ```
-y_pred = cl.classify(X_test, t_pos=0, no_print=False)
+y_pred = cl.classify(X_test)
 ```
 - `X_test` is a r by n Numpy matrix, where there are r datapoints and n features per point.
-- `t_pos` is an optional integer value (0 by default). When set to a number, the progress from this classification gets sent to that progress bar
-- `no_print` is an optional boolean value (false by defauly). If set to true, no logging commands will be printed.
 
-## Using the concurrent classification algorithm
+## Using the feature picking class
 
 ### Explanation
 
-This program supports concurrently training and testing data on multiple CPU cores at once. Training and testing on MultiprocessClassifier works exactly the same as the regular Classifier class. Initialisation simply has an extra optional parameter
-
-### Classifier creation and training
-```
-cl = MultiprocessClassifier(P=None)
-```
-- `P` is an optional integer value (os.cpu_count() - 1 by default) that determines how many cores the program will be run on at once. 
-
-## Feature picking
-
-### Explanation
-
-The FeaturePicker class analyses the features which aren't useful in distinguishing between classes, and returns a list of features that should be used (as a boolean array)
+The FeaturePicker class analyses the features which aren't useful in distinguishing between classes, and returns a list of features that should be used (as a boolean array).
 
 ### Usage of the class
 ```
 feats = FeaturePicker.pickFeatures(X, y)
 X_train = X_train[:, feats]
 ```
-- `X` is the input X data. Use validation data to prevent overfitting
-- `y` is the input y data. Use validation data to prevent overfitting
-
-## Example usage of vector space
-
-### Example 1 - Kanerva's USD-Peso example
-```
-COUNTRY_NAME = HD_space.newVector()
-usa = HD_space.newVector()
-CURRENCY_NAME = HD_space.newVector()
-dollar = HD_space.newVector()
-usa_composite = COUNTRY_NAME * usa + CURRENCY_NAME * dollar
-
-HD_space.get(usa_composite * dollar) == CURRENCY_NAME # True
-```
-
-### Example 2 - Sequencing
-```
-item_a = HD_space.newVector()
-item_b = HD_space.newVector()
-item_c = HD_space.newVector()
-item_d = HD_space.newVector()
-
-seq, perm = HD_space.newSequence(item_a, item_b, item_c, item_d)
-
-HD_space.get(seq.permuteReverse(perm, 2)) == item_c # True
-```
-
-## Example usage of classification algorithm
-```
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-import numpy as np 
-
-X, y = load_digits(return_X_y=True)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-
-cl = Classifier()
-cl.train(X_train, y_train)
-y_pred = cl.classify(X_test)
-
-print(f"{round(np.sum(y_test == y_pred) / y_test.size, 2)} accuracy") # Typically 75% or more accuracy!
-```
-
-## Accuracy on classification datasets
-1) 85% accuracy on 8x8 sklearn dataset (boundary 8, positive only encoded)
-2) 76% accuracy on 28x28 TensorFlow dataset (boundary 85, positive only encoded)
+- `X` is the input X data. Use validation data to prevent overfitting.
+- `y` is the input y data. Use validation data to prevent overfitting.

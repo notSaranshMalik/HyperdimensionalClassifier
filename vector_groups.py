@@ -40,10 +40,8 @@ class VectorGroups:
         '''
         Produces a set of level vectors of size n
         '''
-
         prev = np.random.randint(2, size=SIZE)
         bit_flip = int(SIZE/n)
-
         lst = []
         for _ in range(n):
             flips = np.random.choice(SIZE, bit_flip, replace=False)

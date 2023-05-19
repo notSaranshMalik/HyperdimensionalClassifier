@@ -3,7 +3,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import numpy as np
 from classification import Classifier
-from multi_classification import MultiprocessClassifier
+from classification import Classifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from feature_picker import FeaturePicker
@@ -32,11 +32,8 @@ def MNISTTensorFlowTest():
     X_train = X_train[:, feats]
     X_test = X_test[:, feats]
     
-    if MULTI == 1:
-        MNIST_classifier = Classifier()
-    else:
-        MNIST_classifier = MultiprocessClassifier(MULTI)
-    MNIST_classifier.train(X_train, y_train)
+    MNIST_classifier = Classifier(MULTI,type=TYPE)
+    MNIST_classifier.retrain(X_train, y_train)
 
     y_hat = MNIST_classifier.classify(X_test)
 
@@ -72,10 +69,7 @@ def PCamProcessing(boundary):
     X_train = 1*(X_train > boundary)
     X_test = 1*(X_test > boundary)
 
-    if MULTI == 1:
-        PCAM_classifier = Classifier()
-    else:
-        PCAM_classifier = MultiprocessClassifier(MULTI)
+    PCAM_classifier = Classifier(MULTI, type=TYPE)
     PCAM_classifier.train(X_train, y_train)
 
     y_hat = PCAM_classifier.classify(X_test)
@@ -89,18 +83,10 @@ def PCamProcessing(boundary):
 '''
 Running tests
 '''
-MULTI = 8 # Choose 1 for single classification, or higher for multiprocessing
+# Choose 1 for single classification, or higher for multiprocessing
+MULTI = 7 
+TYPE = "BIN"
 if __name__ == "__main__":
 
-    '''
-    7 runs (85 quantised, no zero enc) - 0.75 accuracy
-    1 run (leveled) - 0.63 accuracy
-    1 run (leveled, no zero enc) - 0.68 accuracy
-    3 runs (leveled, feature selected) - 0.62 accuracy
-    '''
     MNISTTensorFlowTest()
-
-    '''
-    1 run (150 boundary, 0/1 random) - 0.65 accuracy
-    '''
     # PCamProcessing(boundary = 150)

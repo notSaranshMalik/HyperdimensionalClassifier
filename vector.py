@@ -26,7 +26,14 @@ class Vector:
         ret = Vector(self._vector.size, no_init=True)
         ret._vector = 1*(self._vector != other._vector)
         return ret
-    __rmul__ = __mul__
+    
+    def __rmul__(self, other):
+        '''
+        Vector by scalar multiplcation
+        '''
+        ret = Vector(self._vector.size, no_init=True)
+        ret._vector = self._vector * other
+        return ret
 
     def __add__(self, other):
         '''
@@ -35,7 +42,14 @@ class Vector:
         ret = Vector(self._vector.size, no_init=True)
         ret._vector = self._vector + other._vector
         return ret
-    __radd__ = __add__
+
+    def __sub__(self, other):
+        '''
+        Does vector subtraction through bundling
+        '''
+        ret = Vector(self._vector.size, no_init=True)
+        ret._vector = self._vector - other._vector
+        return ret
 
     def __eq__(self, other):
         '''

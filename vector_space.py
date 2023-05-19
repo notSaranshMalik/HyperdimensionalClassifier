@@ -36,7 +36,10 @@ class VectorSpace:
         Adds a vector to the current vector space
         If the vector has a label, it is given that title
         '''
-        self.v_space.append(vec)
+        if self.type == "BIN":
+            self.v_space.append(vec.quantise())
+        else:
+            self.v_space.append(vec)
         self.v_labels.append(label)
     
     def get(self, vec):
@@ -46,11 +49,15 @@ class VectorSpace:
         '''
         size = len(self.v_space)
         dist = np.zeros(size)
+        if self.type == "BIN":
+            find = vec.quantise()
+        else:
+            find = vec
         for i in range(size):
             if self.type == "BIN":
-                dist[i] = vec.hammingDistance(self.v_space[i])
+                dist[i] = find.hammingDistance(self.v_space[i])
             elif self.type == "INT":
-                dist[i] = -vec.cosineSimilarity(self.v_space[i])
+                dist[i] = -find.cosineSimilarity(self.v_space[i])
         if self.v_labels[dist.argmin()] is not None:
             return self.v_labels[dist.argmin()]
         return self.v_space[dist.argmin()]
