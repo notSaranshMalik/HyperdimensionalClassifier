@@ -72,10 +72,10 @@ This is a simple one-pass training method.
 ```
 cl.retrain(X, y, parts)
 ```
-This uses adaptive OnlineHD for a slower, but more accurate retraining system (still one-pass over all data)
+This uses adaptive OnlineHD for a slower, but more accurate retraining system (still one-pass over all data).
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
-- `parts` is an integer, which determines the number of retraining sections (20 recommended)
+- `parts` is an integer, which determines the number of retraining sections (20 recommended).
 
 ### Classification testing
 ```
