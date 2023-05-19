@@ -4,41 +4,49 @@ warnings.filterwarnings("ignore")
 from vector import Vector
 from vector_space import VectorSpace
 from vector_groups import VectorGroups
-
 import numpy as np
 from pathos.multiprocessing import ProcessPool as Pool
 from copy import deepcopy
-from os import cpu_count
+import os
 from sklearn.model_selection import train_test_split
-from tqdm.gui import tqdm
+from tqdm import tqdm
 
 SIZE = 10000
 
 def encode(x, features, values):
     '''
-    Encodes a data point to it's hyperdimensional vector
+    Encodes a data point to it's hyperdimensional vector'
     '''
     sum = Vector(SIZE, zero_vec=True)
     for j in range(x.size):
         sum += features[j] * values[x[j]]
     return sum
 
-def train(X, y, features, values, classes):
+def train(X, y, features, values, classes, bar=False):
     '''
     Encodes all given data, then classifies it into its sections
     '''
-    for i in tqdm(range(X.shape[0]), mininterval=0.5, leave=None):
-        classes[y[i]] += encode(X[i], features, values)
+    if bar:
+        for i in tqdm(range(X.shape[0])):
+            classes[y[i]] += encode(X[i], features, values)
+    else:
+        for i in range(X.shape[0]):
+            classes[y[i]] += encode(X[i], features, values)
     return classes
 
-def classify(X, features, values, vec_space):
+def classify(X, features, values, vec_space, bar=False):
     '''
     Classifies a set of points X (mxn matrix)
     '''
     y_hat = np.zeros(X.shape[0])
-    for i in tqdm(range(X.shape[0]), mininterval=0.5, leave=None):
-        sum = encode(X[i], features, values).quantise()
-        y_hat[i] = vec_space.get(sum)
+    if bar:
+        for i in tqdm(range(X.shape[0])):
+            sum = encode(X[i], features, values)
+            y_hat[i] = vec_space.get(sum)
+    else:
+        for i in range(X.shape[0]):
+            sum = encode(X[i], features, values)
+            y_hat[i] = vec_space.get(sum)
     return y_hat
 
 
@@ -58,7 +66,7 @@ class Classifier:
         if P is not None:
             self.P = P
         else:
-            self.P = cpu_count() - 1
+            self.P = os.cpu_count() - 1
 
     def train(self, X, y):
         '''
@@ -78,17 +86,17 @@ class Classifier:
         classes = dict(zip(unique_y, vecs))
         
         # Create task for sub-classifiers
-        def task(X_sub, y_sub):
+        def task(X_sub, y_sub, ind):
             f = deepcopy(features)
             v = deepcopy(values)
             c = deepcopy(classes)
-            return train(X_sub, y_sub, f, v, c)
+            return train(X_sub, y_sub, f, v, c, bar=(ind==0))
 
         # Start processes
-        print(f"\n\nBEGIN TRAINING ON {self.P} PROCESSES")
+        print(f"\n\nBEGIN TRAINING")
         with Pool(self.P) as pool:
             cls = pool.map(task, np.array_split(X, self.P), 
-                           np.array_split(y, self.P))
+                           np.array_split(y, self.P), range(self.P))
 
         # Merge trained vectors
         for i in classes.keys():
@@ -103,14 +111,13 @@ class Classifier:
         self.features = features
         self.values = values
 
-    def retrain(self, X, y):
+    def retrain(self, X, y, parts):
         '''
-        Retraining algorithm from LeHDC paper
-        https://arxiv.org/pdf/2203.09680.pdf
+        10-part OnlineHD based retraining algorithm
         '''
 
         # Constants
-        RATE = 10
+        RATE = X.shape[0]
 
         # Setup as integer vector space in case user mistakenly used binary
         self.vec_space.type = "INT"
@@ -122,38 +129,52 @@ class Classifier:
         # Start the original training
         self.train(X_train, y_train)
 
-        # Start 20 part retraining
-        X_sect = np.split(X_val, 20)
-        y_sect = np.split(y_val, 20)
-        for i in range(20):
-            print(f"\n\nBEGIN RETRAINING {i+1}")
+        # Start retraining
+        X_sect = np.split(X_val, parts)
+        y_sect = np.split(y_val, parts)
+        for i in range(parts):
             X_data = X_sect[i]
             y_true = y_sect[i]
-            y_pred = self.classify(X_data)
-            for j in range(len(y_pred)):
+            y_pred = self.classify(X_data, _name=
+                                   f"MISCLASSIFICATION PASS {i+1}/{parts}")
+            for j in tqdm(range(len(y_pred))):
                 if y_pred[j] != y_true[j]:
+
+                    # Encode the misclassified data point
                     encoded = encode(X_data[j], self.features, self.values)
+
+                    # Find the index of the classified and real data point
                     true_ind = self.vec_space.v_labels.index(y_true[j])
                     pred_ind = self.vec_space.v_labels.index(y_pred[j])
-                    self.vec_space.v_space[true_ind] += RATE * encoded
-                    self.vec_space.v_space[pred_ind] -= RATE * encoded
 
-    def classify(self, X):
+                    # Calculate similarities
+                    true_sim = self.vec_space.v_space[true_ind]\
+                        .cosineSimilarity(encoded)
+                    pred_sim = self.vec_space.v_space[pred_ind]\
+                        .cosineSimilarity(encoded)
+
+                    # Update model
+                    self.vec_space.v_space[true_ind] += \
+                        (1 - true_sim) * RATE * (1 - i/parts) * encoded
+                    self.vec_space.v_space[pred_ind] -= \
+                        (1 - pred_sim) * RATE * (1 - i/parts) * encoded 
+
+    def classify(self, X, _name="TESTING"):
         '''
         Classify a set of points X (mxn matrix) using multi-processing
         '''
 
         # Create task for sub-classifiers
-        def task(X_sub):
+        def task(X_sub, ind):
             f = deepcopy(self.features)
             v = deepcopy(self.values)
             s = deepcopy(self.vec_space)
-            return classify(X_sub, f, v, s)
+            return classify(X_sub, f, v, s, bar=(ind==0))
         
         # Start processes
-        print(f"\n\nBEGIN TESTING ON {self.P} PROCESSES")
+        print(f"\n\nBEGIN {_name}")
         with Pool(self.P) as pool:
-            cls = pool.map(task, np.array_split(X, self.P))
+            cls = pool.map(task, np.array_split(X, self.P), range(self.P))
         
         # Merge output and return
         return np.concatenate(cls)

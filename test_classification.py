@@ -33,7 +33,7 @@ def MNISTTensorFlowTest():
     X_test = X_test[:, feats]
     
     MNIST_classifier = Classifier(MULTI,type=TYPE)
-    MNIST_classifier.retrain(X_train, y_train)
+    MNIST_classifier.retrain(X_train, y_train, 20)
 
     y_hat = MNIST_classifier.classify(X_test)
 
@@ -84,8 +84,8 @@ def PCamProcessing(boundary):
 Running tests
 '''
 # Choose 1 for single classification, or higher for multiprocessing
-MULTI = 7 
-TYPE = "BIN"
+MULTI = 9
+TYPE = "INT"
 if __name__ == "__main__":
 
     MNISTTensorFlowTest()
