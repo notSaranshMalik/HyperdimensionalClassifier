@@ -111,7 +111,7 @@ class Classifier:
         self.features = features
         self.values = values
 
-    def retrain(self, X, y, parts):
+    def retrain(self, X, y, parts, retrain=0.5):
         '''
         10-part OnlineHD based retraining algorithm
         '''
@@ -124,7 +124,7 @@ class Classifier:
 
         # Get the data for original training
         X_train, X_val, y_train, y_val = train_test_split(
-            X, y, test_size=0.5)
+            X, y, test_size=retrain)
         
         # Start the original training
         self.train(X_train, y_train)

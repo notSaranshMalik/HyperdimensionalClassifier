@@ -33,7 +33,7 @@ def MNISTTensorFlowTest():
     X_test = X_test[:, feats]
     
     MNIST_classifier = Classifier(MULTI,type=TYPE)
-    MNIST_classifier.retrain(X_train, y_train, 20)
+    MNIST_classifier.retrain(X_train, y_train, 20, 0.5)
 
     y_hat = MNIST_classifier.classify(X_test)
 
@@ -66,7 +66,7 @@ def PCamProcessing():
     y_test = np.array(y_test[:, 0, 0, 0])
 
     PCAM_classifier = Classifier(MULTI, type=TYPE)
-    PCAM_classifier.retrain(X_train, y_train, 20)
+    PCAM_classifier.retrain(X_train, y_train, 20, 0.5)
 
     y_hat = PCAM_classifier.classify(X_test)
 
@@ -84,5 +84,5 @@ MULTI = 8
 TYPE = "INT"
 if __name__ == "__main__":
 
-    # MNISTTensorFlowTest()
-    PCamProcessing()
+    MNISTTensorFlowTest()
+    # PCamProcessing()
