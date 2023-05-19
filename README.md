@@ -62,20 +62,20 @@ cl = Classifier(P=None, type="BIN")
 - `type` is an optional string value ("BIN" by default) that determines if the underlying vector space is binary (BIN) or integer (INT) based.
 
 ### Classification training
-A simple training method
 ```
 cl.train(X, y)
 ```
+This is a simple one-pass training method.
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
 
-Uses adaptive OnlineHD for a slower, but more accurate retraining system (one-pass)
 ```
 cl.retrain(X, y, parts)
 ```
+This uses adaptive OnlineHD for a slower, but more accurate retraining system (still one-pass over all data).
 - `X` is a m by n Numpy matrix, where there are m datapoints and n features per point.
 - `y` is a m long Numpy array, where there are m classifications for the m datapoints.
-- `parts` is an integer, which determines the number of retraining sections (20 recommended)
+- `parts` is an integer, which determines the number of retraining sections (20 recommended).
 
 ### Classification testing
 ```
