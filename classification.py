@@ -130,8 +130,8 @@ class Classifier:
         self.train(X_train, y_train)
 
         # Start retraining
-        X_sect = np.split(X_val, parts)
-        y_sect = np.split(y_val, parts)
+        X_sect = np.array_split(X_val, parts)
+        y_sect = np.array_split(y_val, parts)
         for i in range(parts):
             X_data = X_sect[i]
             y_true = y_sect[i]
